@@ -30,8 +30,7 @@
 #
 # Training date: Center, Left and Right images (with steering offsets 0.2
 # Hyper parameters: Epoch 3
-# Results:
-# _________________________________________________________________
+# Results: training without GPU
 # Epoch 1/3
 # 603/603 [==============================] - 404s 669ms/step - loss: 0.5120 - val_loss: 0.0385
 # Epoch 2/3
@@ -39,10 +38,89 @@
 # Epoch 3/3
 # 603/603 [==============================] - 397s 659ms/step - loss: 0.0254 - val_loss: 0.0359
 # 
+# Results: training with GPU 
+# Epoch 1/3
+# 603/603 [==============================] - 72s 119ms/step - loss: 0.3105 - val_loss: 0.0456
+# Epoch 2/3
+# 603/603 [==============================] - 70s 116ms/step - loss: 0.0297 - val_loss: 0.0459
+# Epoch 3/3
+# 603/603 [==============================] - 71s 118ms/step - loss: 0.0221 - val_loss: 0.0688
+# 
 # Approach 2: Use couple of CNN layers to analyze and train from the input images
 # Network Architecture - Generated from model.summary() of a Keras Sequential model:
-# 
-
+# _________________________________________________________________
+# Layer (type)                 Output Shape              Param #   
+# =================================================================
+# cropping2d_1 (Cropping2D)    (None, 80, 320, 3)        0         
+# _________________________________________________________________
+# lambda_1 (Lambda)            (None, 80, 320, 3)        0         
+# _________________________________________________________________
+# conv2d_1 (Conv2D)            (None, 78, 318, 32)       896       
+# _________________________________________________________________
+# max_pooling2d_1 (MaxPooling2 (None, 39, 159, 32)       0         
+# _________________________________________________________________
+# conv2d_2 (Conv2D)            (None, 37, 157, 64)       18496     
+# _________________________________________________________________
+# max_pooling2d_2 (MaxPooling2 (None, 18, 78, 64)        0         
+# _________________________________________________________________
+# conv2d_3 (Conv2D)            (None, 16, 76, 128)       73856     
+# _________________________________________________________________
+# max_pooling2d_3 (MaxPooling2 (None, 8, 38, 128)        0         
+# _________________________________________________________________
+# flatten_1 (Flatten)          (None, 38912)             0         
+# _________________________________________________________________
+# dense_1 (Dense)              (None, 128)               4980864   
+# _________________________________________________________________
+# activation_1 (Activation)    (None, 128)               0         
+# _________________________________________________________________
+# dense_2 (Dense)              (None, 60)                7740      
+# _________________________________________________________________
+# activation_2 (Activation)    (None, 60)                0         
+# _________________________________________________________________
+# dense_3 (Dense)              (None, 1)                 61        
+# =================================================================
+# Total params: 5,081,913
+# Trainable params: 5,081,913
+# Non-trainable params: 0
+# _________________________________________________________________
+#
+# Output: (Sample Data from Project resources)
+# 2020-09-13 12:31:28.780711: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:893] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+# 2020-09-13 12:31:28.782882: I tensorflow/core/common_runtime/gpu/gpu_device.cc:955] Found device 0 with properties: 
+# name: Tesla K80
+# major: 3 minor: 7 memoryClockRate (GHz) 0.8235
+# pciBusID 0000:00:04.0
+# Total memory: 11.17GiB
+# Free memory: 11.10GiB
+# Epoch 1/3
+# 603/603 [==============================] - 203s 337ms/step - loss: 0.0296 - val_loss: 0.0248
+# Epoch 2/3
+# 603/603 [==============================] - 200s 332ms/step - loss: 0.0205 - val_loss: 0.0234
+# Epoch 3/3
+# 603/603 [==============================] - 192s 318ms/step - loss: 0.0154 - val_loss: 0.0226
+#
+# Output: (Track 1 data)
+# Epoch 1/3
+# 401/401 [==============================] - 131s 326ms/step - loss: 0.0580 - val_loss: 0.0549
+# Epoch 2/3
+# 401/401 [==============================] - 125s 312ms/step - loss: 0.0402 - val_loss: 0.0433
+# Epoch 3/3
+# 401/401 [==============================] - 125s 311ms/step - loss: 0.0283 - val_loss: 0.0384
+#
+# Output: (Track 2 data)
+# 436/436 [==============================] - 154s 353ms/step - loss: 0.1565 - val_loss: 0.1289
+# Epoch 2/3
+# 436/436 [==============================] - 137s 315ms/step - loss: 0.0835 - val_loss: 0.1192
+# Epoch 3/3
+# 436/436 [==============================] - 136s 311ms/step - loss: 0.0505 - val_loss: 0.1113
+#
+# Output: (Combined data - Track 1 and Track 2 data combined)
+# Epoch 1/3
+# 836/836 [==============================] - 267s 319ms/step - loss: 0.1098 - val_loss: 0.0981
+# Epoch 2/3
+# 836/836 [==============================] - 262s 314ms/step - loss: 0.0683 - val_loss: 0.0859
+# Epoch 3/3
+# 836/836 [==============================] - 261s 313ms/step - loss: 0.0385 - val_loss: 0.0786
 # Project Rubrics
 # Model using Keras for the problem statement
 
@@ -51,7 +129,7 @@ import csv
 import math
 
 samples = []
-with open('./data/driving_log.csv') as csvfile:
+with open('./combined/driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     counter = 0
     for line in reader:
@@ -80,16 +158,16 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             for batch_sample in batch_samples:
-                centername = './data/IMG/'+batch_sample[0].split('/')[-1]
-                leftname = './data/IMG/'+batch_sample[1].split('/')[-1]
-                rightname = './data/IMG/'+batch_sample[2].split('/')[-1]
+                centername = './combined/IMG/'+batch_sample[0].split('/')[-1]
+                leftname = './combined/IMG/'+batch_sample[1].split('/')[-1]
+                rightname = './combined/IMG/'+batch_sample[2].split('/')[-1]
                 center_image = cv2.imread(centername)
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
                 
                 # Left Images
-                angle_offset = float(0.2) # To be experimented
+                angle_offset = float(0.1) # To be experimented, 0.2 landed the vehicle in water (right side)
                 left_image = cv2.imread(leftname)
                 left_angle = float(batch_sample[3]) - angle_offset
                 images.append(left_image)
