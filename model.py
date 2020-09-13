@@ -31,6 +31,13 @@
 # Training date: Center, Left and Right images (with steering offsets 0.2
 # Hyper parameters: Epoch 3
 # Results:
+# _________________________________________________________________
+# Epoch 1/3
+# 603/603 [==============================] - 404s 669ms/step - loss: 0.5120 - val_loss: 0.0385
+# Epoch 2/3
+# 603/603 [==============================] - 398s 660ms/step - loss: 0.0311 - val_loss: 0.0322
+# Epoch 3/3
+# 603/603 [==============================] - 397s 659ms/step - loss: 0.0254 - val_loss: 0.0359
 # 
 # Approach 2: Use couple of CNN layers to analyze and train from the input images
 # Network Architecture - Generated from model.summary() of a Keras Sequential model:
@@ -141,76 +148,76 @@ model.add(Lambda(lambda x: (x/255.0) - 0.5,
 
 #model.add(... finish defining the rest of your model architecture here ...)
 # Input 80x320x3, Output 78x318x32
-# kernel_size = (3, 3)
-# padding = (0, 0)
-# stride = (1, 1)
-# out_ch = 32
-# model.add(Conv2D(out_ch, kernel_size=kernel_size,
-#                  activation='relu',
-#                  input_shape=[row,col,ch],
-#                  padding='VALID'))
-# row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
-# col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
-# ch = out_ch
-# print("Conv output", row, col, ch)
+kernel_size = (3, 3)
+padding = (0, 0)
+stride = (1, 1)
+out_ch = 32
+model.add(Conv2D(out_ch, kernel_size=kernel_size,
+                 activation='relu',
+                 input_shape=[row,col,ch],
+                 padding='VALID'))
+row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
+col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
+ch = out_ch
+print("Conv output", row, col, ch)
 
-# # Input 76x316x32, Output 25x105,32 74x314x3(wrong)
-# # output_shape = (input_shape - pool_size + 1) / strides)
-# pool_size = (2, 2)
-# stride = (2, 2)
-# model.add(MaxPooling2D(pool_size=pool_size))
-# row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
-# col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
-# print("Maxpool output", row, col, ch)
-# #model.add(Dropout(0.5))
+# Input 76x316x32, Output 25x105,32 74x314x3(wrong)
+# output_shape = (input_shape - pool_size + 1) / strides)
+pool_size = (2, 2)
+stride = (2, 2)
+model.add(MaxPooling2D(pool_size=pool_size))
+row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
+col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
+print("Maxpool output", row, col, ch)
+#model.add(Dropout(0.5))
 
-# # Input 80x320x3, Output 76x316x32
-# kernel_size = (3, 3)
-# padding = (0, 0)
-# stride = (1, 1)
-# out_ch = 64
-# model.add(Conv2D(out_ch, kernel_size=kernel_size,
-#                  activation='relu',
-#                  input_shape=[row,col,ch],
-#                  padding='VALID'))
-# row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
-# col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
-# ch = out_ch
-# print("Conv output", row, col, ch)
+# Input 80x320x3, Output 76x316x32
+kernel_size = (3, 3)
+padding = (0, 0)
+stride = (1, 1)
+out_ch = 64
+model.add(Conv2D(out_ch, kernel_size=kernel_size,
+                 activation='relu',
+                 input_shape=[row,col,ch],
+                 padding='VALID'))
+row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
+col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
+ch = out_ch
+print("Conv output", row, col, ch)
 
-# # Input 76x316x32, Output 25x105,32 74x314x3(wrong)
-# # output_shape = (input_shape - pool_size + 1) / strides)
-# pool_size = (2, 2)
-# stride = (2, 2)
-# model.add(MaxPooling2D(pool_size=pool_size))
-# row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
-# col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
-# print("Maxpool output", row, col, ch)
-# #model.add(Dropout(0.5))
+# Input 76x316x32, Output 25x105,32 74x314x3(wrong)
+# output_shape = (input_shape - pool_size + 1) / strides)
+pool_size = (2, 2)
+stride = (2, 2)
+model.add(MaxPooling2D(pool_size=pool_size))
+row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
+col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
+print("Maxpool output", row, col, ch)
+#model.add(Dropout(0.5))
 
-# # Input 80x320x3, Output 76x316x32
-# kernel_size = (3, 3)
-# padding = (0, 0)
-# stride = (1, 1)
-# out_ch = 128
-# model.add(Conv2D(out_ch, kernel_size=kernel_size,
-#                  activation='relu',
-#                  input_shape=[row,col,ch],
-#                  padding='VALID'))
-# row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
-# col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
-# ch = out_ch
-# print("Conv output", row, col, ch)
+# Input 80x320x3, Output 76x316x32
+kernel_size = (3, 3)
+padding = (0, 0)
+stride = (1, 1)
+out_ch = 128
+model.add(Conv2D(out_ch, kernel_size=kernel_size,
+                 activation='relu',
+                 input_shape=[row,col,ch],
+                 padding='VALID'))
+row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
+col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
+ch = out_ch
+print("Conv output", row, col, ch)
 
-# # Input 76x316x32, Output 25x105,32 74x314x3(wrong)
-# # output_shape = (input_shape - pool_size + 1) / strides)
-# pool_size = (2, 2)
-# stride = (2, 2)
-# model.add(MaxPooling2D(pool_size=pool_size))
-# row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
-# col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
-# print("Maxpool output", row, col, ch)
-# #model.add(Dropout(0.2))
+# Input 76x316x32, Output 25x105,32 74x314x3(wrong)
+# output_shape = (input_shape - pool_size + 1) / strides)
+pool_size = (2, 2)
+stride = (2, 2)
+model.add(MaxPooling2D(pool_size=pool_size))
+row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
+col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
+print("Maxpool output", row, col, ch)
+#model.add(Dropout(0.2))
 
 #1st Layer - Add a flatten layer
 # Input 
@@ -246,13 +253,18 @@ model.summary()
 
 model.compile(loss='mse', optimizer='adam')
 
-# Train
-# Since center, left and right images are used, number of samples becomes 3 times input
-model.fit_generator(train_generator,
-            steps_per_epoch=math.ceil(len(3*train_samples)/batch_size),
-            validation_data=validation_generator,
-            validation_steps=math.ceil(len(3*validation_samples)/batch_size),
-            epochs=3, verbose=1)
+from workspace_utils import active_session
+ 
+# Using utility to keep the workspace active, since the training takes time and the
+# workspace may keep sleeping, losing all progress
+with active_session():
+    # Train
+    # Since center, left and right images are used, number of samples becomes 3 times input
+    model.fit_generator(train_generator,
+                steps_per_epoch=math.ceil(len(3*train_samples)/batch_size),
+                validation_data=validation_generator,
+                validation_steps=math.ceil(len(3*validation_samples)/batch_size),
+                epochs=3, verbose=1)
 
 # Save model
 model.save('model.h5')
