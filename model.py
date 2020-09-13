@@ -3,6 +3,15 @@
 # Input: Recorded data from simulator in training mode
 # Output: Steering angle to keep the vehicle on the track
 # Important Note: Do not use any activation function in the output layer, since the output is a continuous value, not binary
+#
+#
+### Solution Design
+# 1. Used training and validation generator to capture data and use of yield to hold the data
+# 2. Used Keras to build network model
+# 3. Used two approaches for neural network models described below.
+# 4. Calculated output shape for each step (as it is new learning and need to figure out how it is calculated)
+# 5. No data augmentation used here, however while capturing data, vehicle was driven in reverse direction
+#
 # Approach 1: Keras model starting with flattened images and then couple of fully-connected layers, output is steering value
 # Network Architecture - Generated from model.summary() of a Keras Sequential model:
 # _________________________________________________________________
@@ -121,8 +130,28 @@
 # 836/836 [==============================] - 262s 314ms/step - loss: 0.0683 - val_loss: 0.0859
 # Epoch 3/3
 # 836/836 [==============================] - 261s 313ms/step - loss: 0.0385 - val_loss: 0.0786
-# Project Rubrics
-# Model using Keras for the problem statement
+#
+### Project Rubrics
+# Required Files
+# model.py in the base folder (/home/workspace)
+# Under CarND-Behavioral-Cloning-P3 folder:
+# 1. sample_data - model.h5 files for different models without CNN and with CNN (without and with GPU)
+# 2. track1_data - model.h5 file for track 1 (new data recorded - 3 tracks normal, 0.5 track reverse direction)
+# 3. track2_data - model.h5 file for track 2 (new data recorded - 2 tracks normal)
+# 4. track1_run - output_video.mp4 file for track 1 as input data and run in autonomous mode
+# 5. combined_run - output_video.mp4 file for combined track as input data and run in autonomous mode
+#
+# Functional code - Yes
+# Readable code - Yes
+# Model architecture - two approaches with training results captured above 
+# Overfitting corrections - yes, Dropouts were added, but then removed, since the model accuracy is around 97-98%
+# Model tuning - epochs were adjusted to be lower since higher epochs were not reducing the loss much
+# Training data - used sample data provided with project resource to start with. Also captured new data from both track 1 & track 2
+# Solution design - documented above
+# Model architecture - documented above
+# Process for creating training data and process documented - documented above
+# Car navigation on track 1 - TODO: currently it stays on course until track is roughly straight, but goes out of track on sharp turns
+# I can improve it later on, after fixing other pending projects.
 
 import os
 import csv
