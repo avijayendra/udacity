@@ -1,3 +1,44 @@
+### Project: Behaviour Cloning
+# Problem Statement: Build a Keras model to clone vehicle behaviour and keep the vehicle on track
+# Input: Recorded data from simulator in training mode
+# Output: Steering angle to keep the vehicle on the track
+# Important Note: Do not use any activation function in the output layer, since the output is a continuous value, not binary
+# Approach 1: Keras model starting with flattened images and then couple of fully-connected layers, output is steering value
+# Network Architecture - Generated from model.summary() of a Keras Sequential model:
+# _________________________________________________________________
+# Layer (type)                 Output Shape              Param #   
+# =================================================================
+# cropping2d_1 (Cropping2D)    (None, 80, 320, 3)        0         
+# _________________________________________________________________
+# lambda_1 (Lambda)            (None, 80, 320, 3)        0         
+# _________________________________________________________________
+# flatten_1 (Flatten)          (None, 76800)             0         
+# _________________________________________________________________
+# dense_1 (Dense)              (None, 128)               9830528   
+# _________________________________________________________________
+# activation_1 (Activation)    (None, 128)               0         
+# _________________________________________________________________
+# dense_2 (Dense)              (None, 60)                7740      
+# _________________________________________________________________
+# activation_2 (Activation)    (None, 60)                0         
+# _________________________________________________________________
+# dense_3 (Dense)              (None, 1)                 61        
+# =================================================================
+# Total params: 9,838,329
+# Trainable params: 9,838,329
+# Non-trainable params: 0
+#
+# Training date: Center, Left and Right images (with steering offsets 0.2
+# Hyper parameters: Epoch 3
+# Results:
+# 
+# Approach 2: Use couple of CNN layers to analyze and train from the input images
+# Network Architecture - Generated from model.summary() of a Keras Sequential model:
+# 
+
+# Project Rubrics
+# Model using Keras for the problem statement
+
 import os
 import csv
 import math
@@ -100,76 +141,76 @@ model.add(Lambda(lambda x: (x/255.0) - 0.5,
 
 #model.add(... finish defining the rest of your model architecture here ...)
 # Input 80x320x3, Output 78x318x32
-kernel_size = (3, 3)
-padding = (0, 0)
-stride = (1, 1)
-out_ch = 32
-model.add(Conv2D(out_ch, kernel_size=kernel_size,
-                 activation='relu',
-                 input_shape=[row,col,ch],
-                 padding='VALID'))
-row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
-col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
-ch = out_ch
-print("Conv output", row, col, ch)
+# kernel_size = (3, 3)
+# padding = (0, 0)
+# stride = (1, 1)
+# out_ch = 32
+# model.add(Conv2D(out_ch, kernel_size=kernel_size,
+#                  activation='relu',
+#                  input_shape=[row,col,ch],
+#                  padding='VALID'))
+# row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
+# col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
+# ch = out_ch
+# print("Conv output", row, col, ch)
 
-# Input 76x316x32, Output 25x105,32 74x314x3(wrong)
-# output_shape = (input_shape - pool_size + 1) / strides)
-pool_size = (2, 2)
-stride = (2, 2)
-model.add(MaxPooling2D(pool_size=pool_size))
-row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
-col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
-print("Maxpool output", row, col, ch)
-#model.add(Dropout(0.5))
+# # Input 76x316x32, Output 25x105,32 74x314x3(wrong)
+# # output_shape = (input_shape - pool_size + 1) / strides)
+# pool_size = (2, 2)
+# stride = (2, 2)
+# model.add(MaxPooling2D(pool_size=pool_size))
+# row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
+# col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
+# print("Maxpool output", row, col, ch)
+# #model.add(Dropout(0.5))
 
-# Input 80x320x3, Output 76x316x32
-kernel_size = (3, 3)
-padding = (0, 0)
-stride = (1, 1)
-out_ch = 64
-model.add(Conv2D(out_ch, kernel_size=kernel_size,
-                 activation='relu',
-                 input_shape=[row,col,ch],
-                 padding='VALID'))
-row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
-col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
-ch = out_ch
-print("Conv output", row, col, ch)
+# # Input 80x320x3, Output 76x316x32
+# kernel_size = (3, 3)
+# padding = (0, 0)
+# stride = (1, 1)
+# out_ch = 64
+# model.add(Conv2D(out_ch, kernel_size=kernel_size,
+#                  activation='relu',
+#                  input_shape=[row,col,ch],
+#                  padding='VALID'))
+# row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
+# col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
+# ch = out_ch
+# print("Conv output", row, col, ch)
 
-# Input 76x316x32, Output 25x105,32 74x314x3(wrong)
-# output_shape = (input_shape - pool_size + 1) / strides)
-pool_size = (2, 2)
-stride = (2, 2)
-model.add(MaxPooling2D(pool_size=pool_size))
-row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
-col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
-print("Maxpool output", row, col, ch)
-#model.add(Dropout(0.5))
+# # Input 76x316x32, Output 25x105,32 74x314x3(wrong)
+# # output_shape = (input_shape - pool_size + 1) / strides)
+# pool_size = (2, 2)
+# stride = (2, 2)
+# model.add(MaxPooling2D(pool_size=pool_size))
+# row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
+# col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
+# print("Maxpool output", row, col, ch)
+# #model.add(Dropout(0.5))
 
-# Input 80x320x3, Output 76x316x32
-kernel_size = (3, 3)
-padding = (0, 0)
-stride = (1, 1)
-out_ch = 128
-model.add(Conv2D(out_ch, kernel_size=kernel_size,
-                 activation='relu',
-                 input_shape=[row,col,ch],
-                 padding='VALID'))
-row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
-col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
-ch = out_ch
-print("Conv output", row, col, ch)
+# # Input 80x320x3, Output 76x316x32
+# kernel_size = (3, 3)
+# padding = (0, 0)
+# stride = (1, 1)
+# out_ch = 128
+# model.add(Conv2D(out_ch, kernel_size=kernel_size,
+#                  activation='relu',
+#                  input_shape=[row,col,ch],
+#                  padding='VALID'))
+# row = ((row - kernel_size[0] + 2 * padding[0])/(stride[0])) + 1
+# col = ((col - kernel_size[1] + 2 * padding[1])/(stride[1])) + 1
+# ch = out_ch
+# print("Conv output", row, col, ch)
 
-# Input 76x316x32, Output 25x105,32 74x314x3(wrong)
-# output_shape = (input_shape - pool_size + 1) / strides)
-pool_size = (2, 2)
-stride = (2, 2)
-model.add(MaxPooling2D(pool_size=pool_size))
-row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
-col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
-print("Maxpool output", row, col, ch)
-#model.add(Dropout(0.2))
+# # Input 76x316x32, Output 25x105,32 74x314x3(wrong)
+# # output_shape = (input_shape - pool_size + 1) / strides)
+# pool_size = (2, 2)
+# stride = (2, 2)
+# model.add(MaxPooling2D(pool_size=pool_size))
+# row = math.ceil(((row - pool_size[0] + 1)/(stride[0])))
+# col = math.ceil(((col - pool_size[1] + 1)/(stride[1])))
+# print("Maxpool output", row, col, ch)
+# #model.add(Dropout(0.2))
 
 #1st Layer - Add a flatten layer
 # Input 
@@ -194,7 +235,8 @@ model.add(Activation('relu'))
 
 # Output num_classes
 model.add(Dense(num_classes))
-model.add(Activation('softmax'))
+# No activation in the output layer, since it is a continuous value, not binary
+# model.add(Activation('softmax'))
 
 model.summary()
 
@@ -210,7 +252,7 @@ model.fit_generator(train_generator,
             steps_per_epoch=math.ceil(len(3*train_samples)/batch_size),
             validation_data=validation_generator,
             validation_steps=math.ceil(len(3*validation_samples)/batch_size),
-            epochs=3, verbose=3)
+            epochs=3, verbose=1)
 
 # Save model
 model.save('model.h5')
